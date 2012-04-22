@@ -6,13 +6,14 @@ class WordpressBot
 	public $titulo;
 	public $contenido;
 	public $fecha;
+	public $comprobarTitulo = true;
 	
 	//Campos especiales
 	private $tags;
 	private $categorias;
 	private $camposPersonalizados;
 	
-	function _construct($titulo, $contenido)
+	function __construct($titulo, $contenido)
 	{
 		$this->titulo = $titulo;
 		$this->contenido = $contenido;
@@ -20,24 +21,30 @@ class WordpressBot
 		$this->camposPersonalizados = array();
 	}
 	
+	/**
+		La funcion definitiva para publicar!
+	*/
 	public function publicar()
 	{
+		global $wpdb;
+		
 		//Comprobaciones
 		if($this->fecha == null)
 			$this->fecha = date('Y-m-d H:i:s');
-
 		$post = array(
-		  'post_category' => $this->categorias,
-		  'post_content' => $this->contenido,
-		  'post_date' => $this->fecha,
-		  'post_status' => 'publish',
-		  'post_title' => $this->titulo,
-		  'tags_input' => $this->tags,
+		  	'post_title' => $this->titulo,
+		  	'post_content' => $this->contenido,
+		  	'post_date' => $this->fecha,
+		  	'post_status' => 'publish'
 		);
-		$id = wp_insert_post($post);
-		
+		if($this->categorias != null)
+			$post['post_category'] = $this->categorias;
+		if($this->tags != null)
+			$post['tags_input'] = $this->tags;
+		//if( !$comprobarTitulo || !is_numeric(obtenerIDEntrada($this->titulo)) )
+		echo "id: ".$id = wp_insert_post($post);
 		//Ahora anadimos los campos personalizados
-		foreach($camposPersonalizados as $value) {
+		foreach($this->camposPersonalizados as $value) {
 			$datos = array(
 				'meta_id' => null,
 				'post_id' => $id,
@@ -63,23 +70,28 @@ class WordpressBot
 	
 	public function addCategoria($categoria)
 	{
+		if(!is_numeric($categoria)) {
+			$id = $this->obtenerIDCategoria($categoria);
+			if($id == null)
+				$categoria = $this->crearCategoria($categoria);
+		}
 		$this->categorias[] = $categoria;	
 	}
 	
-	public static function obtenerIDCategoria($categoria)
+	public function obtenerIDCategoria($categoria)
 	{
 		 get_term_by('name', $categoria, 'term_id');
 	}
 	
-	public static function insertarCategoria($categoria)
+	public function crearCategoria($categoria)
 	{
-		$my_cat = array('cat_name' => $categoria,
-		 'category_description' => $categoria,
-		 'category_nicename' => sanitize_title($categoria),
-		 'category_parent' => '');
-
-		// Create the category
-		return wp_insert_category($my_cat);
+		return wp_create_category($categoria);
+	}
+	
+	public function obtenerIDEntrada($titulo)
+	{
+		global $wpdb;
+		return  $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '" . $titulo . "'" );
 	}
 	
 };

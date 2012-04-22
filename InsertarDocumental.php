@@ -27,15 +27,15 @@ abstract class InsertarDocumental
 		$this->HTML = utf8_encode($bot->get($this->URL));
 		$this->titulo = $this->getTitulo();
 		$this->imagen = $this->getImagen();
-		$this->texto = $this->getImagen();
+		$this->texto = $this->getTexto();
 		$this->servidor = $this->getServidor();
 		$this->tags = $this->getTags();
 		$this->categorias = $this->getCategorias();
-		
+
 		//Ahora publicamos el documental <-)
 		$wordpress = new WordpressBot($this->titulo,$this->texto);
-		
-		//El proveedor y la URL seran en todo caso obligatorios
+		$wordpress->addCategoria($this->categorias);
+		//El proveedor y la URL seran en todo caso obligatorios ademas del titulo y texto <)
 		$wordpress->addCampoPersonalizado("Proveedor", $this->getProveedor());
 		$wordpress->addCampoPersonalizado("URL", $this->URL);
 		
@@ -51,7 +51,7 @@ abstract class InsertarDocumental
 		}
 		//Categorias
 		
-		//$wordpress->publicar();
+		$wordpress->publicar();
 	}
 	
 	public function test()
