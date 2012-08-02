@@ -2,7 +2,12 @@
 	require_once("HTTPBot.php");
 	require_once("InsertarDocumental.php");
 	require_once("InsertarONLINEDOCUMENTALES_COM.php");
+	require_once("InsertarDOCUMANIATV_COM.php");
+	require_once("InsertarDOCUMENTALES_ONLINE_COM.php");
+	require_once("obtenerONLINEDOCUMENTALES_COM.php");
+	require_once("obtenerDOCUMANIATV_COM.php");
+	require_once("obtenerDOCUMENTALES_ONLINE_COM.php");
 	require_once("WordpressBot.php");
-	require_once("C:\wamp\www\wordpress\wp-config.php");
-	require_once("C:\wamp\www\wordpress\wp-admin/includes/taxonomy.php");
+	require_once("/home/verdocu/public_html/wp-config.php");
+	require_once("/home/verdocu/public_html/wp-admin/includes/taxonomy.php");
 ?>

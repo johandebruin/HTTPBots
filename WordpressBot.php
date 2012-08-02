@@ -1,6 +1,11 @@
 <?php
 date_default_timezone_set('Europe/Madrid');
 
+/********************
+ * 17-07-2012 Añadido subirArchivo aunque parece no funcionar....
+
+*/
+
 class WordpressBot 
 {
 	public $titulo;
@@ -68,7 +73,17 @@ class WordpressBot
 			$this->tags .= ",".$etiqueta;
 	}
 	
-	public function addCategoria($categoria)
+	public function addCategoria($categorias)
+	{
+		if(is_array($categorias)) {
+			foreach($categorias as $categoria) 
+				$this->procesarCategoria($categoria);
+		} else {
+			$this->procesarCategoria($categorias);
+		}
+	}
+	
+	private function procesarCategoria($categoria)
 	{
 		if(!is_numeric($categoria)) {
 			$id = $this->obtenerIDCategoria($categoria);
@@ -94,5 +109,11 @@ class WordpressBot
 		return  $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '" . $titulo . "'" );
 	}
 	
+	public function subirArchivo($url, $nombre) {
+		$file = wp_remote_fopen($url);
+		$return = wp_upload_bits("AAAAAA", null, $file);
+		print_r($return);
+		return $return['url'];
+	}
 };
 ?>
